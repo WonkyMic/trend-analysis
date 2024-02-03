@@ -1,5 +1,17 @@
 package main
 
+import (
+	"time"
+)
+
+// Data structure for TrendDB
+type Article struct {
+	Title   string
+	Views   int
+	Date    time.Time
+	Extract string
+}
+
 type Articles []struct {
 	Article string `json:"article"`
 	Views   int    `json:"views"`

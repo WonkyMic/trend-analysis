@@ -39,7 +39,13 @@ func GetDailyPageviews(date string) (ViewsResponse, error) {
 		return ViewsResponse{}, err
 	}
 
-	return RemoveCommonTitles(data), nil
+	// Filter the data to remove common titles
+	filteredArticles := RemoveCommonTitles(data)
+
+	// Filter for the top 10 articles
+	topArticles := FilterTopArticles(filteredArticles, 10)
+
+	return topArticles, nil
 }
 
 func GetDailyPageviewsForPreviousNumberOfDays(days int) ([]ViewsResponse, error) {
@@ -61,6 +67,23 @@ func GetDailyPageviewsForPreviousNumberOfDays(days int) ([]ViewsResponse, error)
 	}
 
 	return data, nil
+}
+
+func FilterTopArticles(data ViewsResponse, n int) ViewsResponse {
+	for i, item := range data.Items {
+		// Create a new slice to hold the filtered articles
+		articles := Articles{}
+
+		// Limit the number of articles to n
+		if len(item.Articles) > n {
+			articles = item.Articles[:n]
+		}
+
+		// Replace the original articles with the filtered articles
+		data.Items[i].Articles = articles
+	}
+
+	return data
 }
 
 func RemoveCommonTitles(data ViewsResponse) ViewsResponse {

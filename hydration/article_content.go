@@ -10,8 +10,9 @@ import (
 
 func GetArticleExtract(title string) (string, error) {
 	// Define the URL of the API endpoint
+	// exintro: Return only content before the first section
 	baseURL := "https://en.wikipedia.org/w/api.php"
-	params := "?format=json&action=query&prop=extracts&exlimit=max&explaintext&titles=" + url.QueryEscape(title)
+	params := "?format=json&action=query&prop=extracts&exlimit=max&explaintext&exintro&titles=" + url.QueryEscape(title)
 
 	// Send a GET request to the API endpoint
 	resp, err := http.Get(baseURL + params)
@@ -35,7 +36,11 @@ func GetArticleExtract(title string) (string, error) {
 
 	// Extract the article content from the parsed JSON data
 	for _, page := range data.Query.Pages {
-		return page.Extract, nil
+		if page.Extract != "" {
+			return page.Extract, nil
+		} else {
+			return "", fmt.Errorf("no extract found for the given title: %s", title)
+		}
 	}
 
 	return "", fmt.Errorf("no extract found for the given title")
