@@ -25,4 +25,7 @@ To execute
 ```py main.py```
 
 ## /interface
-TODO - UI components displaying related data
+HTMX - Hello world
+
+To execute
+```go run .```

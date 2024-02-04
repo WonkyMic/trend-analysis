@@ -1,6 +1,4 @@
 from transformers import pipeline
-import requests
-from bs4 import BeautifulSoup
 
 class Summarizer:
     def __init__(self):
