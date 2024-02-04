@@ -25,7 +25,7 @@ To execute
 ```py main.py```
 
 ## /interface
-HTMX - Hello world
+HTMX - Basic table displaying Titles and Summaries
 
 To execute
 ```go run .```

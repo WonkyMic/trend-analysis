@@ -2,25 +2,53 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 )
 
+var trendDB *TrendDB
+
 func main() {
-	http.HandleFunc("/", handler)
-	http.HandleFunc("/hi", hi)
-	http.HandleFunc("/hello-world", hello)
+	trendDB = NewTrendDB()
+
+	http.HandleFunc("/", root)
+	http.HandleFunc("/article/summaries", summaries)
 
 	http.ListenAndServe(":8080", nil)
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "index.html")
+func root(w http.ResponseWriter, r *http.Request) {
+	// http.ServeFile(w, r, "index.html")
+	tmpl, err := template.ParseFiles("index.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	tmpl.Execute(w, nil)
 }
 
-func hi(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "<div hx-get=\"/hello-world\">Click me!</div>")
-}
+func summaries(w http.ResponseWriter, r *http.Request) {
+	trendDB.open()
+	defer trendDB.close()
 
-func hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "<div>Hello, world!</div>")
+	articles, err := trendDB.selectArticleSummaries()
+
+	if err != nil {
+		fmt.Println("Error selecting article summaries")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	tmpl, err := template.ParseFiles("./templates/table.tmpl")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+	err = tmpl.Execute(w, articles)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
