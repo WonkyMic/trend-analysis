@@ -11,6 +11,9 @@ var trendDB *TrendDB
 func main() {
 	trendDB = NewTrendDB()
 
+	fs := http.FileServer(http.Dir("./dist"))
+	http.Handle("/dist/", http.StripPrefix("/dist/", fs))
+
 	http.HandleFunc("/", root)
 	http.HandleFunc("/article/summaries", summaries)
 
