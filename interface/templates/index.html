@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trend Dashboard</title>
+    <script src="/dist/htmx.min.js"></script>
+    <link rel="stylesheet" href="/dist/tailwind.css">
+</head>
+<body>
+    <h1 class="text-3xl font-bold underline">Trend Dashboard</h1>
+    <div hx-get="/article/summaries" hx-trigger="load">
+        Loading...
+    </div>
+</body>
+</html>

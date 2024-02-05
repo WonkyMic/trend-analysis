@@ -21,8 +21,7 @@ func main() {
 }
 
 func root(w http.ResponseWriter, r *http.Request) {
-	// http.ServeFile(w, r, "index.html")
-	tmpl, err := template.ParseFiles("index.html")
+	tmpl, err := template.ParseFiles("./templates/index.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
