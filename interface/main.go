@@ -9,14 +9,13 @@ import (
 var trendDB *TrendDB
 
 func main() {
-	fmt.Println("-- Application Setup --")
 	trendDB = NewTrendDB()
 
 	fs := http.FileServer(http.Dir("./dist"))
 	http.Handle("/dist/", http.StripPrefix("/dist/", fs))
 
 	http.HandleFunc("/", root)
-	http.HandleFunc("/article/summaries", summaries)
+	http.HandleFunc("/article", articleRequest)
 
 	fmt.Println("-- Application Started --")
 	http.ListenAndServe(":8080", nil)
@@ -31,12 +30,35 @@ func root(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, nil)
 }
 
-// func summaries(w http.ResponseWriter, r *http.Request) {
-// 	// return hello world
-// 	w.Write([]byte("<div>Hello, World!</div>"))
-// }
+// Parse the form values to invoke either articleSummaries or articleViews
+// based on the form value "index" of either "summaries" or "views"
+func articleRequest(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		r.ParseForm()
+		if r.FormValue("index") == "summaries" {
+			articleSummaries(w, r)
+		} else if r.FormValue("index") == "views" {
+			articleViews(w, r)
+		}
+	}
+}
 
-func summaries(w http.ResponseWriter, r *http.Request) {
+func articleViews(w http.ResponseWriter, r *http.Request) {
+	// if the method is POST then print the form values
+	if r.Method == "POST" {
+		r.ParseForm()
+		fmt.Println(r.Form)
+		fmt.Println("TODO: Implement articleViews")
+	}
+}
+
+func articleSummaries(w http.ResponseWriter, r *http.Request) {
+	// if the method is POST then print the form values
+	if r.Method == "POST" {
+		r.ParseForm()
+		fmt.Println(r.Form)
+	}
+
 	trendDB.open()
 	defer trendDB.close()
 
