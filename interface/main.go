@@ -14,14 +14,21 @@ func main() {
 	fs := http.FileServer(http.Dir("./dist"))
 	http.Handle("/dist/", http.StripPrefix("/dist/", fs))
 
-	http.HandleFunc("/", root)
+	http.HandleFunc("/health", health)
+	http.HandleFunc("/home", home)
 	http.HandleFunc("/article", articleRequest)
 
 	fmt.Println("-- Application Started --")
 	http.ListenAndServe(":8080", nil)
 }
 
-func root(w http.ResponseWriter, r *http.Request) {
+func health(w http.ResponseWriter, r *http.Request) {
+	// return a 200 status code with body "OK" to indicate the application is running
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, "OK")
+}
+
+func home(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("./templates/index.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
