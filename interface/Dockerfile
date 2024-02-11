@@ -1,12 +1,12 @@
-FROM golang:1.18.0-armv7 AS builder
+FROM --platform=arm64 golang:1.21 AS builder
 LABEL maintainer="Michael Barefield <wonkymic@gmail.com>"
-WORKDIR /go
-COPY go.mod go.sum ./
-RUN go mod download
+WORKDIR /src
+# COPY go.mod go.sum ./
+# RUN go mod download
 COPY . ./
-RUN CGO_ENABLED=0 go build -o app
+RUN go build -o app
 
-FROM alpine:3.15-armv7
-COPY --from=builder /go/app /app
+FROM --platform=arm64 alpine:latest
+COPY --from=builder /src/app /app
 CMD ["/app"]
 EXPOSE 8080
