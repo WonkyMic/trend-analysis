@@ -14,6 +14,7 @@ func main() {
 	fs := http.FileServer(http.Dir("./dist"))
 	http.Handle("/dist/", http.StripPrefix("/dist/", fs))
 
+	http.HandleFunc("/", health)
 	http.HandleFunc("/health", health)
 	http.HandleFunc("/home", home)
 	http.HandleFunc("/article", articleRequest)
