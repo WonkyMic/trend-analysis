@@ -1,9 +1,10 @@
 FROM --platform=arm64 golang:latest AS builder
 LABEL maintainer="Michael Barefield <wonkymic@gmail.com>"
 WORKDIR /src
-COPY go.mod go.sum ./
-RUN go mod download
-COPY . ./
+COPY . .
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+ENV GOARCH=arm64
 RUN go build -o app
 
 FROM --platform=arm64 alpine:latest

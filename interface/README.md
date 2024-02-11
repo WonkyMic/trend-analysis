@@ -12,7 +12,14 @@ ghcr.io/wonkymic/trend-analysis/interface:release
 ```
 
 ```
-helm install ui-trend-dashboard helm
+helm install ui-dashboard helm
+helm uninstall ui-dashboard helm
+```
+
+```
+kubectl get pods
+kubectl logs <pod_name>
+kubectl describe pod
 ```
 
 TODO
