@@ -9,6 +9,7 @@ import (
 var trendDB *TrendDB
 
 func main() {
+	fmt.Println("-- Application Setup --")
 	trendDB = NewTrendDB()
 
 	fs := http.FileServer(http.Dir("./dist"))
@@ -17,6 +18,7 @@ func main() {
 	http.HandleFunc("/", root)
 	http.HandleFunc("/article/summaries", summaries)
 
+	fmt.Println("-- Application Started --")
 	http.ListenAndServe(":8080", nil)
 }
 
@@ -28,6 +30,11 @@ func root(w http.ResponseWriter, r *http.Request) {
 	}
 	tmpl.Execute(w, nil)
 }
+
+// func summaries(w http.ResponseWriter, r *http.Request) {
+// 	// return hello world
+// 	w.Write([]byte("<div>Hello, World!</div>"))
+// }
 
 func summaries(w http.ResponseWriter, r *http.Request) {
 	trendDB.open()
