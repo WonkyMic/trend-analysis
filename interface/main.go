@@ -6,22 +6,30 @@ import (
 	"net/http"
 )
 
-var trendDB *TrendDB
+// var trendDB *TrendDB
 
 func main() {
-	trendDB = NewTrendDB()
+	// trendDB = NewTrendDB()
 
 	fs := http.FileServer(http.Dir("./dist"))
 	http.Handle("/dist/", http.StripPrefix("/dist/", fs))
 
-	http.HandleFunc("/", root)
+	http.HandleFunc("/", health)
+	http.HandleFunc("/health", health)
+	http.HandleFunc("/home", home)
 	http.HandleFunc("/article", articleRequest)
 
 	fmt.Println("-- Application Started --")
 	http.ListenAndServe(":8080", nil)
 }
 
-func root(w http.ResponseWriter, r *http.Request) {
+func health(w http.ResponseWriter, r *http.Request) {
+	// return a 200 status code with body "OK" to indicate the application is running
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, "OK")
+}
+
+func home(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("./templates/index.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -59,27 +67,31 @@ func articleSummaries(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(r.Form)
 	}
 
-	trendDB.open()
-	defer trendDB.close()
+	/*
 
-	articles, err := trendDB.selectArticleSummaries()
+		trendDB.open()
+		defer trendDB.close()
 
-	if err != nil {
-		fmt.Println("Error selecting article summaries")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+		articles, err := trendDB.selectArticleSummaries()
 
-	tmpl, err := template.ParseFiles("./templates/table.tmpl")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+		if err != nil {
+			fmt.Println("Error selecting article summaries")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
-	w.Header().Set("Content-Type", "text/html")
-	err = tmpl.Execute(w, articles)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+		tmpl, err := template.ParseFiles("./templates/table.tmpl")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "text/html")
+		err = tmpl.Execute(w, articles)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+	*/
 }
