@@ -8,6 +8,8 @@ ENV GOARCH=arm64
 RUN go build -o app
 
 FROM --platform=arm64 alpine:latest
+COPY --from=builder /src/dist /dist
+COPY --from=builder /src/templates /templates
 COPY --from=builder /src/app /app
-CMD ["/app"]
 EXPOSE 8080
+CMD ["/app"]
